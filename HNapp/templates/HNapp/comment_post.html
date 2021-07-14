@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="topnav">
+  <a class="active" href="{% url 'HNapp:home'%}">Hacker News</a>
+  <a href="{% url 'HNapp:new_home'%}">New</a>
+  <a href="{% url 'HNapp:submit'%}">Submit</a>
+
+  {% if request.user.is_authenticated %}
+    <div class="topnav-right">
+      <a href="{% url 'HNapp:signout' %}">Sign Out </a>
+    </div>
+  {% else %}
+    <div class="topnav-right">
+      <a href="{% url 'HNapp:signin' %}">Sign In </a>
+    </div>
+  {% endif %}
+</div>
+
+<div class="w3-panel w3-light-grey w3-leftbar w3-border-grey">
+<p><a href = "{{post.url}}"><strong>Title: {{post.title}}</strong></a></p>
+{% if post.creator == request.user%}
+<p>{{post.votes}} votes | Created {{post.created_on}}| <a href = "{% url 'HNapp:user_info' post.creator.username %}">{{post.creator.username}}</a> | {{post.comments}} Comments | <a href="{% url 'HNapp:edit' post.id %}"> Edit</a></p>
+{%else %}
+<p>{{post.votes}} votes | Created {{post.created_on}}| <a href = "{% url 'HNapp:user_info' post.creator.username %}">{{post.creator.username}}</a> | {{post.comments}} Comments</p>
+{% endif %}
+<p><strong>Description: </strong>{{post.description}}</p>
+
+
+
+<form method ='post'>
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value = "Submit">
+</form>
+<br>
+</div>
+
+{% for comment in comments %}
+{% if comment.identifier %}
+<div class="w3-panel w3-orange w3-leftbar w3-border-red">
+<p class="ex1" style="font-family:helvetica;" style="color:black"><a href = "{% url 'HNapp:user_info' comment.creator.username %}">Comment by: {{comment.creator.username}}</a> | Thread Level: {{comment.identifier}}</p>
+<p class="ex1" style="font-family:helvetica;" style="color:black"><strong>{{comment.content}}</strong></p>
+<p class="ex1" style="font-family:helvetica;" style="color:black"><a href = "{% url 'HNapp:reply' id1=post.id id2=comment.id %}">reply</a></p>
+</div>
+{% else %}
+<div class="w3-panel w3-red w3-leftbar w3-border-orange">
+<p style="font-family:helvetica;" style="color:black"><a href = "{% url 'HNapp:user_info' comment.creator.username %}">Comment by: {{comment.creator.username}}</a> | Thread Level: {{comment.identifier}}</p>
+<p style="font-family:helvetica;" style="color:black"><strong>{{comment.content}}</strong></p>
+<p style="font-family:helvetica;" style="color:black"><a href = "{% url 'HNapp:reply' id1=post.id id2=comment.id %}">reply</a></p>
+</div>
+{% endif %}
+{% endfor %}
+{% endblock %}

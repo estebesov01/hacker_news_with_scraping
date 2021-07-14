@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+ 
+<div class="topnav">
+  <a class="active" href="{% url 'HNapp:home'%}">Hacker News</a>
+  <a href="{% url 'HNapp:new_home'%}">New</a>
+  <a href="{% url 'HNapp:submit'%}">Submit</a>
+ 
+  {% if request.user.is_authenticated %}
+    <div class="topnav-right">
+      <a href="{% url 'HNapp:signout' %}">Sign Out </a>
+    </div>
+  {% else %}
+    <div class="topnav-right">
+      <a href="{% url 'HNapp:signin' %}">Sign In </a>
+    </div>
+  {% endif %}
+</div>
+ 
+<div class="w3-panel w3-light-grey w3-leftbar w3-border-grey">
+<p> <h5><a href = "{% url 'HNapp:user_info' comment.creator.username %}">{{comment.creator.username}}</a> | On : <a href = "{% url 'HNapp:post' post.id %}">{{post.title}}</a></h5></p>
+<p>{{comment.content}}</p>
+ 
+<form method ='post'>
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value = "Submit">
+</form>
+</div>
+{% endblock %}

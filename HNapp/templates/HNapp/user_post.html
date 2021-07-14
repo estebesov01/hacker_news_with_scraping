@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="topnav">
+  <a class="active" href="{% url 'HNapp:home'%}">Hacker News</a>
+  <a href="{% url 'HNapp:new_home'%}">New</a>
+  <a href="{% url 'HNapp:submit'%}">Submit</a>
+
+  {% if request.user.is_authenticated %}
+    <div class="topnav-right">
+      <a href="{% url 'HNapp:signout' %}">Sign Out </a>
+    </div>
+  {% else %}
+    <div class="topnav-right">
+      <a href="{% url 'HNapp:signin' %}">Sign In </a>
+    </div>
+  {% endif %}
+</div>
+
+<ol>
+{%for post in posts%}
+  <div class="w3-panel w3-light-grey w3-leftbar w3-border-grey">
+  <li><p><a href = "{{post.url}}">{{post.title}}</a></p>
+  <p>{{post.votes}} | Created {{post.created_on}}| <a href = "{% url 'HNapp:user_info' post.creator.username %}">{{post.creator.username}}</a> | <a href="{% url 'HNapp:post' post.id %}"> {{post.comments}} Comments</a></p></li>
+</div>
+{% endfor %}
+</ol>
+{% endblock %}
